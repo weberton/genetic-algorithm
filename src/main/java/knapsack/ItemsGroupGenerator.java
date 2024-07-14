@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ItemsGroupGenerator {
 
-    private final int itemsQuantity;
+    private final int quantityOfItemPerGroup;
     private final DNAItemGenerator dnaItemGenerator;
 
     public ItemsGroupGenerator(final int quantityOfItemPerGroup,
@@ -14,15 +14,19 @@ public class ItemsGroupGenerator {
                                final int minValue,
                                final int maxValue) {
         dnaItemGenerator = new DNAItemGenerator(minWeight, maxWeight, minValue, maxValue);
-        this.itemsQuantity = quantityOfItemPerGroup;
+        this.quantityOfItemPerGroup = quantityOfItemPerGroup;
     }
 
     public ItemsGroup generateItemsGroup() {
-        List<DNA> items = new ArrayList<>(itemsQuantity);
-        for (int i = 0; i < itemsQuantity; i++) {
+        List<DNA> items = new ArrayList<>(quantityOfItemPerGroup);
+        for (int i = 0; i < quantityOfItemPerGroup; i++) {
             items.add(dnaItemGenerator.generateRandomItem());
         }
 
         return new ItemsGroup(items);
+    }
+
+    public int getQuantityOfItemPerGroup() {
+        return quantityOfItemPerGroup;
     }
 }

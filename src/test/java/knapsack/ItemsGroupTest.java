@@ -21,6 +21,6 @@ public class ItemsGroupTest {
         itemsGroup.calculateScore(knapsack);
 
         assertThat(itemsGroup.getScore()).isEqualTo(10);
-        assertThat(itemsGroup.getUsedItems()).containsExactlyInAnyOrder(0, 1, 0, 1);
+        assertThat(itemsGroup.getUsedItemsDNA()).containsExactlyInAnyOrder(item2, item4);
     }
 }
