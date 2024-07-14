@@ -14,6 +14,7 @@ public class Population {
 
     private final Knapsack knapsack;
     private final List<ItemsGroup> population;
+    private final double mutationRate;
     private final int populationSize;
     private final ItemsGroupGenerator itemsGroupGenerator;
     private ItemsGroup itemMaxScore = null;
@@ -21,10 +22,12 @@ public class Population {
 
     public Population(final Knapsack knapsack,
                       final int populationSize,
-                      final int quantityOfItemPerGroup) {
+                      final int quantityOfItemPerGroup,
+                      final double mutationRate) {
         this.knapsack = knapsack;
         this.populationSize = populationSize;
         this.population = new ArrayList<>(populationSize);
+        this.mutationRate = mutationRate;
         int minWeight = 1;
         int maxWeight = knapsack.getCapacity() * 2;
         this.itemsGroupGenerator = new ItemsGroupGenerator(quantityOfItemPerGroup, minWeight, maxWeight, MIN_VALUE, MAX_VALUE);
@@ -62,7 +65,7 @@ public class Population {
             ItemsGroup father = selectParent();
             ItemsGroup mother = selectParent();
             ItemsGroup child = father.crossover(mother);
-           // child.mutate(0.01);
+            child.mutate(mutationRate);
             population.set(i, child);
         }
         generations++;
