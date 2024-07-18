@@ -13,10 +13,10 @@ public class Population {
     private static final int MAX_VALUE = 1000;//Integer.MAX_VALUE;
 
     private final Knapsack knapsack;
-    private final List<ItemsGroup> population;
     private final double mutationRate;
     private final int populationSize;
     private final ItemsGroupGenerator itemsGroupGenerator;
+    private List<ItemsGroup> population;
     private ItemsGroup itemMaxScore = null;
     private int generations;
 
@@ -61,13 +61,15 @@ public class Population {
 
     public void generate() {
         System.out.printf("------Generating new population. Generations number %d ----%n", getGenerations());
+        List<ItemsGroup> newPopulation = new ArrayList<>(this.population.size());
         for (int i = 0; i < population.size(); i++) {
             ItemsGroup father = selectParent();
             ItemsGroup mother = selectParent();
             ItemsGroup child = father.crossover(mother);
             child.mutate(mutationRate);
-            population.set(i, child);
+            newPopulation.add(child);
         }
+        this.population = newPopulation;
         generations++;
     }
 
@@ -109,5 +111,9 @@ public class Population {
 
     public int getGenerations() {
         return generations;
+    }
+
+    public ItemsGroup getItemMaxScore() {
+        return itemMaxScore;
     }
 }
