@@ -1,5 +1,8 @@
 package knapsack;
 
+import knapsack.csv.DiamondCsvReader;
+import knapsack.csv.DiamondGroupGenerator;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,8 +17,8 @@ public class Population {
 
     private final Knapsack knapsack;
     private final double mutationRate;
-    private final int populationSize;
-    private final ItemsGroupGenerator itemsGroupGenerator;
+    private int populationSize;
+    private ItemsGroupGenerator itemsGroupGenerator;
     private List<ItemsGroup> population;
     private ItemsGroup itemMaxScore = null;
     private int generations;
@@ -37,8 +40,18 @@ public class Population {
         // calculateFitness();
     }
 
+    public Population(final Knapsack knapsack,
+                      final int quantityOfItemPerGroup,
+                      final double mutationRate,
+                      final String file) {
+        this.knapsack = knapsack;
+        this.mutationRate = mutationRate;
+        this.population = new ArrayList<>();
+        generateGroups(file, quantityOfItemPerGroup);
+    }
+
     public void calculateFitness() {
-        int maxScore = itemMaxScore == null ? 0 : itemMaxScore.getScore();
+        double maxScore = itemMaxScore == null ? 0 : itemMaxScore.getScore();
         for (ItemsGroup itemsGroup : population) {
             itemsGroup.calculateScore(knapsack);
             if (itemsGroup.getScore() > maxScore) {
@@ -96,7 +109,7 @@ public class Population {
         return Objects.nonNull(itemMaxScore) && getKnapsackEmptySpace() == 0;
     }
 
-    private int getKnapsackEmptySpace() {
+    private double getKnapsackEmptySpace() {
         return knapsack.getCapacity() - itemMaxScore.getUsedItems().stream().map(DNA::getWeight).reduce(0, Integer::sum);
     }
 
@@ -109,11 +122,22 @@ public class Population {
         }
     }
 
+    private void generateGroups(String file, int quantityOfItemPerGroup) {
+        DiamondGroupGenerator diamondGroupGenerator = new DiamondGroupGenerator();
+        this.population = diamondGroupGenerator.generate(file, quantityOfItemPerGroup);
+        this.populationSize = this.population.size();
+    }
+
+
     public int getGenerations() {
         return generations;
     }
 
     public ItemsGroup getItemMaxScore() {
         return itemMaxScore;
+    }
+
+    public int getPopulationSize() {
+        return populationSize;
     }
 }

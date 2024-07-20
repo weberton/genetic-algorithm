@@ -27,4 +27,11 @@ public class DNA {
         this.weight = newWeight < 0 ? newWeight * -1 : newWeight;
         this.value = newValue < 0 ? newValue * -1 : newValue;
     }
+
+    public static DNA generateRandom() {
+        Random random = new Random();
+        int weight = random.nextInt(1, 100);
+        int value = random.nextInt(1, 1000);
+        return new DNA(weight, value);
+    }
 }

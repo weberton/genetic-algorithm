@@ -14,12 +14,13 @@ import java.awt.*;
 public class Main {
 
     public static void main(String[] args) {
-        Knapsack knapsack = new Knapsack(800);
+        Knapsack knapsack = new Knapsack(11);
         int populationSize = 500;
-        int quantityOfItemsPerGroup = 30;
+        int quantityOfItemsPerGroup = 2;
         double mutationRate = 0.01;
 
-        Population population = new Population(knapsack, populationSize, quantityOfItemsPerGroup, mutationRate);
+        //Population population = new Population(knapsack, populationSize, quantityOfItemsPerGroup, mutationRate);
+        Population population = new Population(knapsack, quantityOfItemsPerGroup, mutationRate, "diamonds.csv");
 
         XYSeries series = new XYSeries("Score");
         XYSeriesCollection dataset = new XYSeriesCollection(series);
@@ -32,7 +33,7 @@ public class Main {
             //TODO check strategy name
             population.generate();
             int generation = population.getGenerations();
-            int score = population.getItemMaxScore().getScore();
+            double score = population.getItemMaxScore().getScore();
             series.add(generation, score);
 
             JFreeChart chart = ChartFactory.createXYLineChart(
@@ -47,7 +48,7 @@ public class Main {
             );
 
             TextTitle subtitle = new TextTitle();
-            subtitle.setText("Population size %d".formatted(populationSize));
+            subtitle.setText("Population size %d. Items per Group %d".formatted(population.getPopulationSize(), quantityOfItemsPerGroup));
             chart.addSubtitle(subtitle);
 
             ChartPanel chartPanel = new ChartPanel(chart);
