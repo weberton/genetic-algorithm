@@ -49,18 +49,18 @@ public class Population {
 
         System.out.printf("Items with max value: %d%n", itemMaxScore.getScore());
         System.out.printf("Items weight: %s%n", itemMaxScore.getUsedItems().stream()
-                                                            .map(dna -> String.valueOf(dna.getWeight()))
-                                                            .collect(Collectors.joining(",")));
+                .map(dna -> String.valueOf(dna.getWeight()))
+                .collect(Collectors.joining(",")));
         System.out.printf("Items values: %s%n", itemMaxScore.getUsedItems().stream()
-                                                            .map(dna -> String.valueOf(dna.getValue()))
-                                                            .collect(Collectors.joining(",")));
+                .map(dna -> String.valueOf(dna.getValue()))
+                .collect(Collectors.joining(",")));
         System.out.printf(
                 "Unused space: %d%n",
                 knapsack.getCapacity() - itemMaxScore.getUsedItems().stream().map(DNA::getWeight).reduce(0, Integer::sum));
     }
 
     public void generate() {
-        System.out.printf("------Generating new population. Generations number %d ----%n", getGenerations());
+        System.out.printf("------Generating new population using genetic algorithm. Generations number %d ----%n", getGenerations());
         List<ItemsGroup> newPopulation = new ArrayList<>(this.population.size());
         for (int i = 0; i < population.size(); i++) {
             ItemsGroup father = selectParent();
@@ -73,12 +73,34 @@ public class Population {
         generations++;
     }
 
+    /**
+     * Cria uma nova populacao de forma aleatoria, sem usar recursos de algoritmo genetico
+     */
+    public void generateRandomPopulation() {
+        System.out.printf("------Generating new population randomly. Generations number %d ----%n", getGenerations());
+        List<ItemsGroup> newPopulation = new ArrayList<>(this.population.size());
+        for (int i = 0; i < population.size(); i++) {
+            newPopulation.add(itemsGroupGenerator.generateItemsGroup());
+        }
+
+        this.population = newPopulation;
+        generations++;
+    }
+
+    /**
+     * Cria uma nova populacao a partir de forca bruta, usando populacoes que nunca foram usadas
+     */
+    public void generateBruteForcePopulation() {
+        generateRandomPopulation();
+        // TODO implement brute force strategy
+    }
+
     private ItemsGroup selectParent() {
         Integer[] parentsIndex = Stream.generate(() -> new Random().ints(0, populationSize))
-                                       .flatMap(IntStream::boxed)
-                                       .distinct()
-                                       .limit(2) // whatever limit you might need
-                                       .toArray(Integer[]::new);
+                .flatMap(IntStream::boxed)
+                .distinct()
+                .limit(2) // whatever limit you might need
+                .toArray(Integer[]::new);
         int fatherCandidateIndex1 = parentsIndex[0];
         int fatherCandidateIndex2 = parentsIndex[1];
 
@@ -103,7 +125,7 @@ public class Population {
 
     private void generatePopulation() {
         System.out.printf("Generating population of %d with %d item per group. %n", populationSize,
-                          itemsGroupGenerator.getQuantityOfItemPerGroup());
+                itemsGroupGenerator.getQuantityOfItemPerGroup());
         for (int i = 0; i < populationSize; i++) {
             population.add(itemsGroupGenerator.generateItemsGroup());
         }
