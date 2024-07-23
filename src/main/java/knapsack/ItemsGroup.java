@@ -68,9 +68,18 @@ public class ItemsGroup {
     }
 
     private DNA generateChild(DNA fatherGene, DNA motherGene) {
-        int childWeight = fatherGene.getWeight() ^ motherGene.getWeight();
-        int childValue = fatherGene.getValue() ^ motherGene.getValue();
+        Random random = new Random();
+        boolean useFatherGene = random.nextBoolean();
+    
+        int childWeight = useFatherGene ? fatherGene.getWeight() : motherGene.getWeight();
+        int childValue = useFatherGene ? fatherGene.getValue() : motherGene.getValue();
+    
         return new DNA(childWeight, childValue);
+
+
+        //int childWeight = fatherGene.getWeight() ^ motherGene.getWeight();
+        //int childValue = fatherGene.getValue() ^ motherGene.getValue();
+        //return new DNA(childWeight, childValue);
     }
 
     public void mutate(double rate) {

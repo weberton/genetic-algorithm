@@ -1,5 +1,10 @@
 package knapsack;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+
+import javax.swing.JFrame;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -8,19 +13,16 @@ import org.jfree.chart.title.TextTitle;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import javax.swing.*;
-import java.awt.*;
-
 public class Main {
 
     public static void main(String[] args) {
-        Knapsack knapsack = new Knapsack(11);
-        int populationSize = 500;
-        int quantityOfItemsPerGroup = 2;
-        double mutationRate = 0.01;
+        Knapsack knapsack = new Knapsack(5000); //alteração do peso da mochila para miligrama
+        int populationSize = 50;
+        int quantityOfItemsPerGroup = 50;
+        double mutationRate = 0.05;
 
         //Population population = new Population(knapsack, populationSize, quantityOfItemsPerGroup, mutationRate);
-        Population population = new Population(knapsack, quantityOfItemsPerGroup, mutationRate, "diamonds.csv");
+        Population population = new Population(knapsack, populationSize, quantityOfItemsPerGroup, mutationRate, "diamonds.csv");
 
         XYSeries series = new XYSeries("Score");
         XYSeriesCollection dataset = new XYSeriesCollection(series);
@@ -28,9 +30,11 @@ public class Main {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setPreferredSize(new Dimension(800, 650));
 
-        while (!population.isKnapsackFull()) {
+        int count = 0;
+
+        while ( count < 1000) { //!population.isKnapsackFull()
             population.calculateFitness();
-            //TODO check strategy name
+            //TODO check strategy names
             population.generate();
             int generation = population.getGenerations();
             double score = population.getItemMaxScore().getScore();
@@ -55,6 +59,8 @@ public class Main {
             frame.getContentPane().add(chartPanel, BorderLayout.CENTER);
             frame.pack();
             frame.setVisible(true);
+
+            count++;
 
         }
 

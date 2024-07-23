@@ -1,8 +1,5 @@
 package knapsack;
 
-import knapsack.csv.DiamondCsvReader;
-import knapsack.csv.DiamondGroupGenerator;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -10,6 +7,8 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import knapsack.csv.DiamondGroupGenerator;
 
 public class Population {
     private static final int MIN_VALUE = 1;
@@ -41,10 +40,12 @@ public class Population {
     }
 
     public Population(final Knapsack knapsack,
+                      final int populationSize,
                       final int quantityOfItemPerGroup,
                       final double mutationRate,
                       final String file) {
         this.knapsack = knapsack;
+        this.populationSize = populationSize;
         this.mutationRate = mutationRate;
         this.population = new ArrayList<>();
         generateGroups(file, quantityOfItemPerGroup);

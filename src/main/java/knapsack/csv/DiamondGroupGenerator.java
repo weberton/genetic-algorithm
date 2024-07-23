@@ -1,10 +1,10 @@
 package knapsack.csv;
 
-import knapsack.DNA;
-import knapsack.ItemsGroup;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import knapsack.DNA;
+import knapsack.ItemsGroup;
 
 public class DiamondGroupGenerator {
 

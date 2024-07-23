@@ -1,8 +1,8 @@
 package knapsack.csv;
 
-import com.opencsv.bean.CsvBindByPosition;
-
 import java.util.Objects;
+
+import com.opencsv.bean.CsvBindByPosition;
 
 public class Diamond {
     @CsvBindByPosition(position = 0)
@@ -30,7 +30,7 @@ public class Diamond {
     }
 
     public double getWeight() {
-        return weight;
+        return weight * 200; //alteração do peso do diamante para miligrama
     }
 
     public void setWeight(double weight) {
