@@ -1,10 +1,10 @@
 package knapsack.csv;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import knapsack.DNA;
 import knapsack.ItemsGroup;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DiamondGroupGenerator {
 
@@ -32,6 +32,21 @@ public class DiamondGroupGenerator {
         }
 
         verifyMissingDnaItems(dnaList, population, quantityOfItemPerGroup);
+
+        return population;
+    }
+
+    public List<ItemsGroup> generateRandomPopulation(int quantityOfItemPerGroup) {
+        List<ItemsGroup> population = new ArrayList<>();
+
+        List<DNA> dnaList = new ArrayList<>();
+
+        // Add all items in a list then we can random select the items based on the quantityOfItemPerGroup
+        for (int quantity = 0; quantity < quantityOfItemPerGroup; quantity++) {
+            dnaList.add(DNA.generateRandom());
+            population.add(new ItemsGroup(dnaList));
+        }
+
 
         return population;
     }

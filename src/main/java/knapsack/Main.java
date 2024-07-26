@@ -21,11 +21,26 @@ public class Main {
         int quantityOfItemsPerGroup = 50;
         double mutationRate = 0.05;
 
-        //Population population = new Population(knapsack, populationSize, quantityOfItemsPerGroup, mutationRate);
+        // Inicializar a primeira população que será usada com algoritmo genético
         Population population = new Population(knapsack, populationSize, quantityOfItemsPerGroup, mutationRate, "diamonds.csv");
 
-        XYSeries series = new XYSeries("Score");
+        // Inicializar a segunda população que será usada sem algoritmo genético, com geracao totalmente aleatória das novas populações
+        Population populationRandomPopulation = new Population(knapsack, populationSize, quantityOfItemsPerGroup, mutationRate, "diamonds.csv");
+
+        // Inicializar a terceira população que será usada sem algoritmo genético, com estratégia de força bruta
+        Population populationBestSelection = new Population(knapsack, populationSize, quantityOfItemsPerGroup, mutationRate, "diamonds.csv");
+
+        // Série para o método com algoritmo genético
+        XYSeries series = new XYSeries("Genetic Algorithm");
+        // Série para o método sem algoritmo genético
+        XYSeries seriesRandomPopulation = new XYSeries("Random Population");
+        // Série para o método sem algoritmo genético e com um valor de mutação diferente
+        XYSeries seriesBestPopulation = new XYSeries("Best Population Selection");
+
         XYSeriesCollection dataset = new XYSeriesCollection(series);
+        dataset.addSeries(seriesRandomPopulation);
+        dataset.addSeries(seriesBestPopulation);
+
         JFrame frame = new JFrame("Knapsack Score Chart");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setPreferredSize(new Dimension(800, 650));
@@ -33,12 +48,33 @@ public class Main {
         int count = 0;
 
         while ( count < 1000) { //!population.isKnapsackFull()
+            // Calcula o fitness da população com algoritmo genético
             population.calculateFitness();
             //TODO check strategy names
             population.generate();
             int generation = population.getGenerations();
             double score = population.getItemMaxScore().getScore();
+            System.out.println("------Score Genetic Algorithm: " + score);
+            System.out.println("-");
             series.add(generation, score);
+
+            // Calcula o fitness da população sem algoritmo genético e com geracao totalmente aleatória das novas populações
+            populationRandomPopulation.calculateFitness();
+            // Gera uma nova população sem algoritmo genético
+            populationRandomPopulation.generateRandomPopulation();
+            double scoreRandomPopulation = populationRandomPopulation.getItemMaxScore().getScore();
+            System.out.println("------Score Random Population: " + scoreRandomPopulation);
+            System.out.println("-");
+            seriesRandomPopulation.add(generation, scoreRandomPopulation);
+
+            // Calcula o fitness da população sem algoritmo genético e com um valor de mutação diferente
+            populationBestSelection.calculateFitness();
+            // Gera uma nova população sem algoritmo genético e com um valor de mutação diferente
+            populationBestSelection.generateBestPopulation();
+            double scoreBestPopulation = populationBestSelection.getItemMaxScore().getScore();
+            System.out.println("------Score Best Population: " + scoreBestPopulation);
+            System.out.println("-");
+            seriesBestPopulation.add(generation, scoreBestPopulation);
 
             JFreeChart chart = ChartFactory.createXYLineChart(
                     "Knapsack Score Chart",
