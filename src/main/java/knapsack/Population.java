@@ -1,14 +1,12 @@
 package knapsack;
 
+import knapsack.csv.DiamondGroupGenerator;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
-import knapsack.csv.DiamondGroupGenerator;
 
 public class Population {
     private static final int MIN_VALUE = 1;
@@ -16,28 +14,13 @@ public class Population {
 
     private final Knapsack knapsack;
     private final double mutationRate;
+    private final int quantityOfItemPerGroup;
+    private final String file;
     private int populationSize;
     private ItemsGroupGenerator itemsGroupGenerator;
     private List<ItemsGroup> population;
     private ItemsGroup itemMaxScore = null;
     private int generations;
-
-    public Population(final Knapsack knapsack,
-                      final int populationSize,
-                      final int quantityOfItemPerGroup,
-                      final double mutationRate) {
-        this.knapsack = knapsack;
-        this.populationSize = populationSize;
-        this.population = new ArrayList<>(populationSize);
-        this.mutationRate = mutationRate;
-        int minWeight = 1;
-        int maxWeight = knapsack.getCapacity() * 2;
-        this.itemsGroupGenerator = new ItemsGroupGenerator(quantityOfItemPerGroup, minWeight, maxWeight, MIN_VALUE, MAX_VALUE);
-        this.generations = 0;
-
-        generatePopulation();
-        // calculateFitness();
-    }
 
     public Population(final Knapsack knapsack,
                       final int populationSize,
@@ -48,6 +31,8 @@ public class Population {
         this.populationSize = populationSize;
         this.mutationRate = mutationRate;
         this.population = new ArrayList<>();
+        this.quantityOfItemPerGroup = quantityOfItemPerGroup;
+        this.file = file;
         generateGroups(file, quantityOfItemPerGroup);
     }
 
@@ -61,38 +46,14 @@ public class Population {
             }
         }
 
-        System.out.printf("Items with max value: %d%n", itemMaxScore.getScore());
-        System.out.printf("Items weight: %s%n", itemMaxScore.getUsedItems().stream()
-                                                            .map(dna -> String.valueOf(dna.getWeight()))
-                                                            .collect(Collectors.joining(",")));
-        System.out.printf("Items values: %s%n", itemMaxScore.getUsedItems().stream()
-                                                            .map(dna -> String.valueOf(dna.getValue()))
-                                                            .collect(Collectors.joining(",")));
-        System.out.printf(
-                "Unused space: %d%n",
-                knapsack.getCapacity() - itemMaxScore.getUsedItems().stream().map(DNA::getWeight).reduce(0, Integer::sum));
-    }
-
-    public void generate() {
-        System.out.printf("------Generating new population. Generations number %d ----%n", getGenerations());
-        List<ItemsGroup> newPopulation = new ArrayList<>(this.population.size());
-        for (int i = 0; i < population.size(); i++) {
-            ItemsGroup father = selectParent();
-            ItemsGroup mother = selectParent();
-            ItemsGroup child = father.crossover(mother);
-            child.mutate(mutationRate);
-            newPopulation.add(child);
-        }
-        this.population = newPopulation;
-        generations++;
     }
 
     private ItemsGroup selectParent() {
         Integer[] parentsIndex = Stream.generate(() -> new Random().ints(0, populationSize))
-                                       .flatMap(IntStream::boxed)
-                                       .distinct()
-                                       .limit(2) // whatever limit you might need
-                                       .toArray(Integer[]::new);
+                .flatMap(IntStream::boxed)
+                .distinct()
+                .limit(2)
+                .toArray(Integer[]::new);
         int fatherCandidateIndex1 = parentsIndex[0];
         int fatherCandidateIndex2 = parentsIndex[1];
 
@@ -103,23 +64,6 @@ public class Population {
             return itemGroup1;
         } else {
             return itemGroup2;
-        }
-    }
-
-    public boolean isKnapsackFull() {
-        return Objects.nonNull(itemMaxScore) && getKnapsackEmptySpace() == 0;
-    }
-
-    private double getKnapsackEmptySpace() {
-        return knapsack.getCapacity() - itemMaxScore.getUsedItems().stream().map(DNA::getWeight).reduce(0, Integer::sum);
-    }
-
-
-    private void generatePopulation() {
-        System.out.printf("Generating population of %d with %d item per group. %n", populationSize,
-                          itemsGroupGenerator.getQuantityOfItemPerGroup());
-        for (int i = 0; i < populationSize; i++) {
-            population.add(itemsGroupGenerator.generateItemsGroup());
         }
     }
 
@@ -140,5 +84,70 @@ public class Population {
 
     public int getPopulationSize() {
         return populationSize;
+    }
+
+    public void generate() {
+        System.out.printf("------Generating new population with genetic algorithm. Generation %d.------%n", generations);
+        List<ItemsGroup> newPopulation = new ArrayList<>(this.population.size());
+        for (int i = 0; i < population.size(); i++) {
+            ItemsGroup father = selectParent();
+            ItemsGroup mother = selectParent();
+            ItemsGroup child = father.crossover(mother);
+            child.mutate(mutationRate);
+            newPopulation.add(child);
+        }
+        this.population = newPopulation;
+        generations++;
+    }
+
+    public void generateRandomPopulation() {
+        System.out.printf("------Generating new population with random population strategy. Generation %d.------%n", generations);
+        List<ItemsGroup> bestPopulation = new ArrayList<>();
+        // copia e ordena a populacao atual
+        List<ItemsGroup> sortedPopulation = new ArrayList<>(this.population);
+        sortedPopulation.sort((o1, o2) -> Double.compare(o2.getScore(), o1.getScore()));
+        // agora fazemos a mutacao em uma parte da populacao. A diferenca 'e que sera uma parte aleatoria, entre 10 e 90%
+        int mutationSize = new Random().nextInt(sortedPopulation.size() / 2) + sortedPopulation.size() / 4;
+        for (int i = 0; i < sortedPopulation.size(); i++) {
+            ItemsGroup itemsGroup = sortedPopulation.get(i);
+            if (i < sortedPopulation.size() / mutationSize) {
+                itemsGroup.mutate(mutationRate);
+            }
+            bestPopulation.add(itemsGroup);
+        }
+
+        this.population = bestPopulation;
+        generations++;
+    }
+
+    /**
+     *  Vamos fazer uma ordenação para pegar os melhores e depois fazer mutacao em 50% dos piores
+     */
+    public void generateBestPopulation() {
+        System.out.printf("------Generating new population with best population strategy. Generation %d.------%n", generations);
+        List<ItemsGroup> bestPopulation = new ArrayList<>();
+        // copia e ordena a populacao atual
+        List<ItemsGroup> sortedPopulation = new ArrayList<>(this.population);
+        sortedPopulation.sort((o1, o2) -> Double.compare(o2.getScore(), o1.getScore()));
+        // agora fazemos a mutacao na metade inferior
+        for (int i = 0; i < sortedPopulation.size(); i++) {
+            ItemsGroup itemsGroup = sortedPopulation.get(i);
+            if (i < sortedPopulation.size() / 2) {
+                itemsGroup.mutate(mutationRate);
+            }
+            bestPopulation.add(itemsGroup);
+        }
+
+        this.population = bestPopulation;
+        generations++;
+    }
+
+
+    /**
+     * Retorna um item aleatório da população
+     */
+    private ItemsGroup selectRandom() {
+        int randomIndex = new Random().nextInt(this.population.size());
+        return this.population.get(randomIndex);
     }
 }
