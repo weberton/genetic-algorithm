@@ -21,11 +21,11 @@ public class DNA {
 
     public void mutate() {
         Random random = new Random();
-        int newWeight = this.weight >> random.nextInt(1, 5);
-        int newValue = this.value >> random.nextInt(1, 5);
+        int newWeight = Math.abs(this.weight >> random.nextInt(1, 5));
+        int newValue = Math.abs(this.value >> random.nextInt(1, 5));
 
-        this.weight = newWeight < 0 ? newWeight * -1 : newWeight;
-        this.value = newValue < 0 ? newValue * -1 : newValue;
+        this.weight = newWeight;
+        this.value = newValue;
     }
 
     public static DNA generateRandom() {

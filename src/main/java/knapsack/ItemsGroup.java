@@ -75,11 +75,6 @@ public class ItemsGroup {
         int childValue = useFatherGene ? fatherGene.getValue() : motherGene.getValue();
     
         return new DNA(childWeight, childValue);
-
-
-        //int childWeight = fatherGene.getWeight() ^ motherGene.getWeight();
-        //int childValue = fatherGene.getValue() ^ motherGene.getValue();
-        //return new DNA(childWeight, childValue);
     }
 
     public void mutate(double rate) {

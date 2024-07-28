@@ -9,15 +9,9 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Population {
-    private static final int MIN_VALUE = 1;
-    private static final int MAX_VALUE = 1000;//Integer.MAX_VALUE;
-
     private final Knapsack knapsack;
     private final double mutationRate;
-    private final int quantityOfItemPerGroup;
-    private final String file;
     private int populationSize;
-    private ItemsGroupGenerator itemsGroupGenerator;
     private List<ItemsGroup> population;
     private ItemsGroup itemMaxScore = null;
     private int generations;
@@ -31,8 +25,6 @@ public class Population {
         this.populationSize = populationSize;
         this.mutationRate = mutationRate;
         this.population = new ArrayList<>();
-        this.quantityOfItemPerGroup = quantityOfItemPerGroup;
-        this.file = file;
         generateGroups(file, quantityOfItemPerGroup);
     }
 
@@ -140,14 +132,5 @@ public class Population {
 
         this.population = bestPopulation;
         generations++;
-    }
-
-
-    /**
-     * Retorna um item aleatório da população
-     */
-    private ItemsGroup selectRandom() {
-        int randomIndex = new Random().nextInt(this.population.size());
-        return this.population.get(randomIndex);
     }
 }
