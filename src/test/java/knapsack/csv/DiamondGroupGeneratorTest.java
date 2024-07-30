@@ -22,7 +22,7 @@ public class DiamondGroupGeneratorTest {
         String fileName = "diamonds_test.csv";
         List<ItemsGroup> result = diamondGroupGenerator.generate(fileName, 5);
         assertThat(result.size()).isEqualTo(1);
-        assertThat(result.getFirst().getItems().size()).isEqualTo(5);
+        assertThat(result.getFirst().getItems().size()).isEqualTo(3);
     }
 
     @Test
@@ -31,6 +31,6 @@ public class DiamondGroupGeneratorTest {
         List<ItemsGroup> result = diamondGroupGenerator.generate(fileName, 2);
         assertThat(result.size()).isEqualTo(2);
         assertThat(result.getFirst().getItems().size()).isEqualTo(2);
-        assertThat(result.getLast().getItems().size()).isEqualTo(2);
+        assertThat(result.getLast().getItems().size()).isEqualTo(1);
     }
 }

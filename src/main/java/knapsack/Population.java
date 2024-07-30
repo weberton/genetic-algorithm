@@ -17,12 +17,10 @@ public class Population {
     private int generations;
 
     public Population(final Knapsack knapsack,
-                      final int populationSize,
                       final int quantityOfItemPerGroup,
                       final double mutationRate,
                       final String file) {
         this.knapsack = knapsack;
-        this.populationSize = populationSize;
         this.mutationRate = mutationRate;
         this.population = new ArrayList<>();
         generateGroups(file, quantityOfItemPerGroup);

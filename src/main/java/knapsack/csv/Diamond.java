@@ -30,7 +30,7 @@ public class Diamond {
     }
 
     public double getWeight() {
-        return weight * 200; //alteração do peso do diamante para miligrama
+        return weight * 200; //alteração do peso do diamante para grama
     }
 
     public void setWeight(double weight) {

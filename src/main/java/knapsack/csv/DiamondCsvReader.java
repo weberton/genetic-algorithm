@@ -45,17 +45,9 @@ public class DiamondCsvReader {
 
     private Path getFilePath(String fileName) {
         try {
-            return Paths.get(getClass().getClassLoader()
-                                       .getResource(fileName).toURI());
-
+            return Paths.get(getClass().getClassLoader().getResource(fileName).toURI());
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("File not found.", e);
         }
-    }
-
-    public static void main(String[] args) {
-        DiamondCsvReader diamondCsvReader = new DiamondCsvReader();
-        List<Diamond> result = diamondCsvReader.read("diamonds.csv");
-        System.out.println(result);
     }
 }

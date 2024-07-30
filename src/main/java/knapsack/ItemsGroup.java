@@ -57,11 +57,15 @@ public class ItemsGroup {
         List<DNA> fatherUsedItems = getItems();
         List<DNA> motherUsedItems = mother.getItems();
         List<DNA> children = new ArrayList<>();
-
+        int motherIndex = 0;
         for (int i = 0; i < fatherUsedItems.size(); i++) {
             DNA fatherGene = fatherUsedItems.get(i);
-            DNA motherGene = motherUsedItems.get(i);
+            if (motherIndex >= motherUsedItems.size())
+                motherIndex = 0;
+
+            DNA motherGene = motherUsedItems.get(motherIndex);
             children.add(generateChild(fatherGene, motherGene));
+            motherIndex++;
         }
 
         return new ItemsGroup(children);

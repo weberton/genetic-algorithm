@@ -1,10 +1,5 @@
 package knapsack;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-
-import javax.swing.JFrame;
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -13,22 +8,26 @@ import org.jfree.chart.title.TextTitle;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import javax.swing.*;
+import java.awt.*;
+
 public class Main {
 
+    private static final String DIAMONDS_CSV = "diamonds.csv";
+
     public static void main(String[] args) {
-        Knapsack knapsack = new Knapsack(5000); //alteração do peso da mochila para miligrama
-        int populationSize = 50;
-        int quantityOfItemsPerGroup = 50;
+        Knapsack knapsack = new Knapsack(5000); //alteração do peso da mochila para gramas
+        int quantityOfItemsPerGroup = 1000;
         double mutationRate = 0.05;
 
         // Inicializar a primeira população que será usada com algoritmo genético
-        Population population = new Population(knapsack, populationSize, quantityOfItemsPerGroup, mutationRate, "diamonds.csv");
+        Population population = new Population(knapsack, quantityOfItemsPerGroup, mutationRate, DIAMONDS_CSV);
 
         // Inicializar a segunda população que será usada sem algoritmo genético, com geracao totalmente aleatória das novas populações
-        Population populationRandomPopulation = new Population(knapsack, populationSize, quantityOfItemsPerGroup, mutationRate, "diamonds.csv");
+        Population populationRandomPopulation = new Population(knapsack, quantityOfItemsPerGroup, mutationRate, DIAMONDS_CSV);
 
         // Inicializar a terceira população que será usada sem algoritmo genético, com estratégia de força bruta
-        Population populationBestSelection = new Population(knapsack, populationSize, quantityOfItemsPerGroup, mutationRate, "diamonds.csv");
+        Population populationBestSelection = new Population(knapsack, quantityOfItemsPerGroup, mutationRate, DIAMONDS_CSV);
 
         // Série para o método com algoritmo genético
         XYSeries series = new XYSeries("Genetic Algorithm");
@@ -43,7 +42,7 @@ public class Main {
 
         JFrame frame = new JFrame("Knapsack Score Chart");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setPreferredSize(new Dimension(800, 650));
+        frame.setPreferredSize(new Dimension(1280, 720));
 
         int count = 0;
 
